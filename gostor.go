@@ -1,5 +1,9 @@
 package gostor
 
+import (
+	"database/sql/driver"
+)
+
 type Container interface {
 	Register(interface{}) error
 	Store(interface{}) error
@@ -7,25 +11,6 @@ type Container interface {
 	RestoreSet(interface{}) ([]interface{}, error)
 }
 
-func New(db, path string) Container {
+func New(db driver.Driver, path string) Container {
 	return cntr{}
-}
-
-type cntr struct{}
-
-func (c cntr) Register(interface{}) error {
-	return nil
-}
-
-func (c cntr) Store(interface{}) error {
-	return nil
-}
-
-func (c cntr) Restore(d interface{}) (interface{}, error) {
-	return d, nil
-}
-
-func (c cntr) RestoreSet(d interface{}) ([]interface{}, error) {
-	set := []interface{}{ d }
-	return set, nil
 }
