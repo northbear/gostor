@@ -1,13 +1,9 @@
-package gostor_test
+package gostor
 
 import (
-	"database/sql/driver"
+	// "database/sql/driver"
 	"testing"
-
-	"github.com/northbear/gostor"
 )
 
 func TestRegisterImplication(t *testing.T) {
-	var drv driver.Driver
-	_ = gostor.New(drv, "")
 }

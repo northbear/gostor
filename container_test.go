@@ -1,7 +1,7 @@
 package gostor
 
 import (
-	dbdrv "database/sql/driver"
+	"database/sql"
 	"testing"
 
 )
@@ -11,7 +11,7 @@ type TestStruct struct{}
 
 var (
 	_ Container = cntr{}
-	drv dbdrv.Driver
+	drv *sql.DB
 
 )
 

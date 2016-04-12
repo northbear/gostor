@@ -1,11 +1,12 @@
 package gostor
 
-import ()
+import (
+	"database/sql"
+)
 
-type cntr struct{}
-
-func (c cntr) Register(interface{}) error {
-	return nil
+type cntr struct{
+	db *sql.DB
+	options string
 }
 
 func (c cntr) Store(interface{}) error {
