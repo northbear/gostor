@@ -2,25 +2,42 @@ package gostor
 
 import (
 	"database/sql"
+	"fmt"
 	"testing"
 
 )
 
 
-type TestStruct struct{}
+type TestStruct struct{
+	Id int64
+	Name string
+}
 
 var (
 	_ Container = cntr{}
 	drv *sql.DB
-
 )
 
-func GetTestContainer() Container {
-	return New(drv, "")
+type testGostor struct{
+	dbpath string
 }
 
+func (cns testGostor) NewContainer() Container {
+	uri := fmt.Sprintf("file:%s?mode=rwc&cache=private", cns.dbpath)
+
+	db, err := sql.Open("sqlite3", uri)
+	if err != nil {
+		fmt.Println(err)
+	}
+	
+	container := New(db, "")
+	return container
+}
+
+
 func TestRegister(t *testing.T) {
-	gs := GetTestContainer()
+	cns := testGostor{}
+	gs := cns.NewContainer()
 
 	err := gs.Register(TestStruct{})
 
@@ -30,7 +47,8 @@ func TestRegister(t *testing.T) {
 }
 
 func TestStore(t *testing.T) {
-	gs := GetTestContainer()
+	cns := testGostor{}
+	gs := cns.NewContainer()
 	err := gs.Register(TestStruct{})
 	if err != nil {
 		t.Log("cannot register a structure in the container")
@@ -44,7 +62,8 @@ func TestStore(t *testing.T) {
 }
 
 func TestRestore(t *testing.T) {
-	gs := GetTestContainer()
+	cns := testGostor{}
+	gs := cns.NewContainer()
 	err := gs.Register(TestStruct{})
 	if err != nil {
 		t.Log("cannot register a structure in the container")
@@ -66,7 +85,8 @@ func TestRestore(t *testing.T) {
 }
 
 func TestRestoreSet(t *testing.T) {
-	gs := GetTestContainer()
+	cns := testGostor{}
+	gs := cns.NewContainer()
 	err := gs.Register(TestStruct{})
 	if err != nil {
 		t.Log("cannot register a structure in the container")

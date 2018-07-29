@@ -22,6 +22,7 @@ func New(db *sql.DB, options string) Container {
 	container := cntr{
 		db:   db,
 		options: options,
+		registered: make(map[string]metainfo),
 	}
 	return container
 }

@@ -27,19 +27,12 @@ func (fs filesupp) GetFileName() string {
 	return fs.fname
 }
 
-func (fs filesupp) UnlinkFileName() {
-	_, err := os.Stat(fs.fname)
-	if err == nil {
-		os.Remove(fs.fname)
-	}
-}
-
 type cnsupp struct{
-	filesupp
+	dbpath string
 }
 
 func (cns cnsupp) GetGostorContainer() gostor.Container {
-	uri := fmt.Sprintf("file:%s?mode=rwc&cache=private", cns.GetFileName())
+	uri := fmt.Sprintf("file:%s?mode=rwc&cache=private", cns.dbpath)
 
 	db, err := sql.Open("sqlite3", uri)
 	if err != nil {
@@ -50,14 +43,9 @@ func (cns cnsupp) GetGostorContainer() gostor.Container {
 	return container
 }
 
-func (cns cnsupp) Drop() {
-	cns.UnlinkFileName() 
-}
-
 func TestGostor(t *testing.T) {
 	tsupp := cnsupp{}
 	gstor := tsupp.GetGostorContainer()
-	defer tsupp.Drop()
 	
 	if gstor == nil {
 		t.Error("cannot create container")
@@ -84,14 +72,18 @@ func TestNewToCreateContainer(t *testing.T) {
 }
 
 type ProperStruct struct{
+	Id int64
 }
 
 func TestRegisterToAcceptStuct(t *testing.T) {
-	cntest := cnsupp{}
+	fname := path.Join(os.TempDir(), "testdb.sqlite3")
+	defer os.Remove(fname)
+	
+	cntest := cnsupp{fname}
 	cn := cntest.GetGostorContainer()
-
-	err := cn.Register(&ProperStruct{})
+	
+	err := cn.Register(ProperStruct{})
 	if err != nil {
-		t.Error("Cannot register proper struct")
+		t.Error("Cannot register proper struct: " + err.Error())
 	}
 }

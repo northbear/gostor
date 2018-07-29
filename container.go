@@ -7,6 +7,7 @@ import (
 type cntr struct{
 	db *sql.DB
 	options string
+	registered map[string]metainfo
 }
 
 func (c cntr) Store(interface{}) error {
